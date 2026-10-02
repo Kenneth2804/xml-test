@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<items>
+    <item>
+        <id>1</id>
+        <name>Producto A</name>
+        <price>150</price>
+        <stock>20</stock>
+    </item>
+
+    <item>
+        <id>2</id>
+        <name>Producto B</name>
+        <price>250</price>
+        <stock>10</stock>
+    </item>
+
+    <item>
+        <id>3</id>
+        <name>Producto C</name>
+        <price>350</price>
+        <stock>5</stock>
+    </item>
+</items>
