@@ -79,7 +79,7 @@ app.get("/test", (req, res) => {
         items: [
             {
                 id: 1,
-                name: "Producto prueba",
+                name: "Producto prueba2",
                 status: "success"
             }
         ]
