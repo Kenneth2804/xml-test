@@ -15,32 +15,29 @@ function authenticate(req, res, next) {
     const apiKey = req.headers["x-api-key"];
 
     if (!apiKey) {
-        return res.status(401).send(`
-            <?xml version="1.0" encoding="UTF-8"?>
-            <error>
-                <status>401</status>
-                <message>API Key requerida</message>
-            </error>
-        `);
+        return res.status(401).json({
+            error: {
+                status: 401,
+                message: "API Key requerida"
+            }
+        });
     }
 
     if (apiKey !== API_KEY) {
-        return res.status(403).send(`
-            <?xml version="1.0" encoding="UTF-8"?>
-            <error>
-                <status>403</status>
-                <message>API Key incorrecta</message>
-            </error>
-        `);
+        return res.status(403).json({
+            error: {
+                status: 403,
+                message: "API Key incorrecta"
+            }
+        });
     }
 
     next();
 }
 
-
 app.get("/", (req, res) => {
     res.json({
-        name: "DataSync XML API",
+        name: "DataSync JSON API",
         status: "online",
         endpoint: "/api/datasync/products"
     });
@@ -70,48 +67,33 @@ app.get("/api/datasync/products", authenticate, (req, res) => {
         }
     ];
 
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<products>
-    ${products.map(product => `
-    <product>
-        <id>${product.id}</id>
-        <name>${product.name}</name>
-        <price>${product.price}</price>
-        <stock>${product.stock}</stock>
-    </product>
-    `).join("")}
-</products>`;
-
-    res
-        .status(200)
-        .type("application/xml")
-        .send(xml);
+    res.status(200).json({
+        items: products
+    });
 });
 
 
 app.get("/test", (req, res) => {
 
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<test>
-    <status>success</status>
-    <message>XML funcionando correctamente</message>
-</test>`;
-
-    res
-        .status(200)
-        .type("application/xml")
-        .send(xml);
+    res.status(200).json({
+        items: [
+            {
+                id: 1,
+                name: "Producto prueba",
+                status: "success"
+            }
+        ]
+    });
 });
 
 app.use((req, res) => {
 
-    res.status(404).type("application/xml").send(`
-        <?xml version="1.0" encoding="UTF-8"?>
-        <error>
-            <status>404</status>
-            <message>Endpoint no encontrado</message>
-        </error>
-    `);
+    res.status(404).json({
+        error: {
+            status: 404,
+            message: "Endpoint no encontrado"
+        }
+    });
 });
 
 
@@ -122,14 +104,12 @@ app.listen(PORT, () => {
 Servidor:
 http://localhost:${PORT}
 
-XML de prueba:
+JSON de prueba:
 http://localhost:${PORT}/test
 
-XML para DataSync:
+JSON para DataSync:
 http://localhost:${PORT}/api/datasync/products
 
-API Key:
-${API_KEY}
-
+========================================
 `);
 });
