@@ -7,34 +7,8 @@ require("dotenv").config();
 const app = express();
 
 const PORT = process.env.PORT || 3000;
-const API_KEY = process.env.API_KEY || mi_clave_secreta_123;
-
 app.use(cors());
 app.use(express.json());
-
-function authenticate(req, res, next) {
-    const apiKey = req.headers["x-api-key"];
-
-    if (!apiKey) {
-        return res.status(401).type("application/xml").send(`
-            <error>
-                <status>401</status>
-                <message>API Key requerida</message>
-            </error>
-        `);
-    }
-
-    if (apiKey !== API_KEY) {
-        return res.status(403).type("application/xml").send(`
-            <error>
-                <status>403</status>
-                <message>API Key incorrecta</message>
-            </error>
-        `);
-    }
-
-    next();
-}
 
 app.get("/", (req, res) => {
     res.json({
@@ -44,11 +18,11 @@ app.get("/", (req, res) => {
     });
 });
 
-app.get("/api/datasync/products", authenticate, (req, res) => {
+app.get("/api/datasync/products", (req, res) => {
 
     const xmlContent = fs.readFileSync(`products_items.xml`, `utf8`);
 
-    /* 
+    
 
     const filePath = path.join(__dirname, "products_items.xml");
 
@@ -61,10 +35,13 @@ app.get("/api/datasync/products", authenticate, (req, res) => {
                 </error>
             `);
         }
- */
-        res.send(xmlContent);
-    });
 
+        res
+            .status(200)
+            .type("application/xml")
+            .send(data);
+    });
+});
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en puerto ${PORT}`);
